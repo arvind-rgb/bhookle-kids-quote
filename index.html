@@ -134,21 +134,29 @@
     width:400px;margin:0 auto;background:var(--mulberry);border-radius:var(--r-2xl);
     padding:22px 20px 20px;position:relative;overflow:hidden;color:var(--cream)}
   #invoice .confetti{position:absolute;inset:0;pointer-events:none;opacity:.85}
-  .inv-head{display:flex;align-items:center;gap:10px;position:relative;margin-bottom:14px}
+  .inv-head{display:flex;align-items:center;gap:10px;position:relative;z-index:2;margin-bottom:14px}
   .inv-head .mark{height:40px;width:auto;flex:none;display:block}
   .inv-head .bt{line-height:1}
   .inv-head .bt b{font-weight:900;font-size:16px}
   .inv-head .bt b em{font-style:normal;color:var(--orange)}
   .inv-head .bt span{font-weight:700;font-size:8px;letter-spacing:.2em;color:var(--orange);display:block;margin-top:2px}
-  .inv-head .qtag{margin-left:auto;text-align:right}
-  .inv-head .qtag .k{font-weight:700;font-size:8px;letter-spacing:.14em;color:#C9B6D9}
-  .inv-head .qtag .v{font-weight:900;font-size:12px;color:var(--cream)}
+  .inv-buddy{margin-left:auto;width:48px;height:56px;flex:none;align-self:center;display:block}
 
-  .inv-buddy{position:absolute;right:14px;top:60px;width:58px;height:auto;opacity:.95;z-index:0}
-  .paper{background:var(--cream);color:var(--ink);border-radius:var(--r-lg);padding:16px 15px;position:relative;z-index:1}
-  .paper .ptitle{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+  /* confetti + love marks (single inline SVG bands = html2canvas-safe) */
+  .topband{position:absolute;top:0;left:0;width:400px;height:80px;z-index:1;pointer-events:none}
+  .botband{display:block;width:100%;height:20px;margin:12px auto 0;pointer-events:none}
+  .paper-deco svg{position:absolute;aspect-ratio:1;height:auto;display:block}
+
+  .paper{background:var(--cream);color:var(--ink);border-radius:var(--r-lg);padding:16px 15px;position:relative;z-index:1;overflow:hidden}
+  .paper-deco{position:absolute;inset:0;pointer-events:none;z-index:0}
+  .paper-deco svg{opacity:.12}
+  .paper > *:not(.paper-deco){position:relative;z-index:1}
+  .paper .ptitle{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
   .paper .ptitle h2{font-weight:900;font-size:19px;margin:0}
-  .paper .ptitle .date{font-weight:700;font-size:11px;color:var(--muted)}
+  .paper .ptitle h2 .theart{width:15px;aspect-ratio:1;height:auto;display:inline-block;vertical-align:-1px;margin-left:2px}
+  .paper .ptitle .qmeta{text-align:right;flex:none}
+  .paper .ptitle .qmeta .qid{font-weight:900;font-size:11px;color:var(--mulberry);letter-spacing:.01em}
+  .paper .ptitle .qmeta .date{font-weight:700;font-size:10px;color:var(--muted);margin-top:1px}
   .billto{font-size:12px;line-height:1.5;margin-bottom:12px;padding-bottom:12px;border-bottom:1.5px dashed var(--line)}
   .billto .n{font-weight:900;font-size:14px}
   .billto .m{color:var(--muted);font-weight:500}
@@ -173,7 +181,7 @@
   .pay .pinfo .k{font-weight:700;font-size:9px;letter-spacing:.12em;color:var(--teal)}
   .pay .pinfo .upi{font-weight:900;font-size:13.5px;color:var(--ink);word-break:break-all;margin:2px 0 3px}
   .pay .pinfo .sc{font-weight:500;font-size:10.5px;color:var(--muted);line-height:1.35}
-  .inv-foot{text-align:center;margin-top:14px;position:relative;z-index:1}
+  .inv-foot{text-align:center;margin-top:6px;position:relative;z-index:1}
   .inv-foot .tl{font-weight:900;font-size:10px;letter-spacing:.16em;color:var(--magenta)}
 
   .hint{font-weight:500;font-size:12px;color:var(--muted);text-align:center;margin:14px 4px 0}
@@ -226,6 +234,11 @@
     <path d="M22 52c-8-3-14 2-16 9" fill="none" stroke="#FFA70B" stroke-width="7" stroke-linecap="round"/>
     <path d="M98 52c8-4 15 1 18 8" fill="none" stroke="#FFA70B" stroke-width="7" stroke-linecap="round"/>
   </symbol>
+
+  <!-- love + sparkle marks (fill via currentColor) -->
+  <symbol id="hrt" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21s-8.6-5.4-8.6-11.5A4.6 4.6 0 0 1 12 5.9a4.6 4.6 0 0 1 8.6 3.6C20.6 15.6 12 21 12 21z"/></symbol>
+  <symbol id="st5" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.3 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></symbol>
+  <symbol id="st4" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2z"/></symbol>
 </svg>
 
 <div class="wrap">
@@ -323,16 +336,44 @@
   <section id="s3" class="hidden">
     <div class="invoice-scroll">
       <div id="invoice">
-        <svg class="confetti" viewBox="0 0 400 520" preserveAspectRatio="xMidYMid slice"><use href="#conf"/></svg>
+        <!-- top confetti + mascot as ONE inline SVG (html2canvas-safe) -->
+        <svg class="topband" viewBox="0 0 400 80" xmlns="http://www.w3.org/2000/svg">
+          <path transform="translate(42,11) scale(0.6) translate(-12,-12)" fill="#FFA70B" d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.3 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/>
+          <path transform="translate(112,9) scale(0.5) translate(-12,-12)" fill="#E51A4B" d="M12 21s-8.6-5.4-8.6-11.5A4.6 4.6 0 0 1 12 5.9a4.6 4.6 0 0 1 8.6 3.6C20.6 15.6 12 21 12 21z"/>
+          <path transform="translate(184,12) scale(0.45) translate(-12,-12)" fill="#00AAB2" d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2z"/>
+          <path transform="translate(250,8) scale(0.5) translate(-12,-12)" fill="#FFA70B" d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.3 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/>
+          <path transform="translate(232,50) scale(0.42) translate(-12,-12)" fill="#FFA70B" opacity=".9" d="M12 21s-8.6-5.4-8.6-11.5A4.6 4.6 0 0 1 12 5.9a4.6 4.6 0 0 1 8.6 3.6C20.6 15.6 12 21 12 21z"/>
+          <path transform="translate(288,44) scale(0.36) translate(-12,-12)" fill="#FFF8EC" opacity=".7" d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2z"/>
+          <g transform="translate(318,10) scale(0.42)">
+            <ellipse cx="60" cy="128" rx="34" ry="7" fill="#000" opacity=".18"/>
+            <rect x="50" y="14" width="20" height="10" rx="5" fill="none" stroke="#FFA70B" stroke-width="7"/>
+            <rect x="26" y="26" width="68" height="92" rx="16" fill="#FFA70B"/>
+            <line x1="26" y1="58" x2="94" y2="58" stroke="#F59300" stroke-width="4"/>
+            <line x1="26" y1="86" x2="94" y2="86" stroke="#F59300" stroke-width="4"/>
+            <circle cx="49" cy="74" r="4.5" fill="#2D1B3D"/><circle cx="71" cy="74" r="4.5" fill="#2D1B3D"/>
+            <circle cx="50.5" cy="72.5" r="1.4" fill="#fff"/><circle cx="72.5" cy="72.5" r="1.4" fill="#fff"/>
+            <circle cx="42" cy="82" r="4" fill="#E51A4B" opacity=".55"/><circle cx="78" cy="82" r="4" fill="#E51A4B" opacity=".55"/>
+            <path d="M50 84c4 5 16 5 20 0" fill="none" stroke="#2D1B3D" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M22 52c-8-3-14 2-16 9" fill="none" stroke="#FFA70B" stroke-width="7" stroke-linecap="round"/>
+            <path d="M98 52c8-4 15 1 18 8" fill="none" stroke="#FFA70B" stroke-width="7" stroke-linecap="round"/>
+          </g>
+        </svg>
+
         <div class="inv-head">
           <img class="mark" id="markInv" alt="Bhookle"/>
           <div class="bt"><b>Bhookle<em> Kids</em></b><span>AMMA IN A DABBA</span></div>
-          <div class="qtag"><div class="k">QUOTE ID</div><div class="v" id="iv-qid">—</div></div>
         </div>
-        <svg class="inv-buddy" viewBox="0 0 120 140"><use href="#buddy"/></svg>
 
         <div class="paper">
-          <div class="ptitle"><h2>Quotation</h2><div class="date" id="iv-date">—</div></div>
+          <div class="paper-deco">
+            <svg viewBox="0 0 24 24" style="color:#E51A4B;right:12px;top:10px;width:24px;height:24px"><path fill="currentColor" d="M12 21s-8.6-5.4-8.6-11.5A4.6 4.6 0 0 1 12 5.9a4.6 4.6 0 0 1 8.6 3.6C20.6 15.6 12 21 12 21z"/></svg>
+            <svg viewBox="0 0 24 24" style="color:#FFA70B;left:14px;bottom:12px;width:22px;height:22px"><path fill="currentColor" d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.3 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+            <svg viewBox="0 0 24 24" style="color:#00AAB2;right:22px;bottom:70px;width:16px;height:16px"><path fill="currentColor" d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2z"/></svg>
+          </div>
+          <div class="ptitle">
+            <h2>Quotation <svg class="theart" viewBox="0 0 24 24" style="color:#E51A4B;width:15px;height:15px"><path fill="currentColor" d="M12 21s-8.6-5.4-8.6-11.5A4.6 4.6 0 0 1 12 5.9a4.6 4.6 0 0 1 8.6 3.6C20.6 15.6 12 21 12 21z"/></svg></h2>
+            <div class="qmeta"><div class="qid" id="iv-qid">—</div><div class="date" id="iv-date">—</div></div>
+          </div>
           <div class="billto">
             <div class="n" id="iv-name">—</div>
             <div class="m" id="iv-meta">—</div>
@@ -355,7 +396,16 @@
           </div>
           <div class="introfoot">✳ Introductory offer — limited-period pricing, subject to change.</div>
         </div>
-        <div class="inv-foot"><div class="tl">COOKED WITH LOVE · SERVED WITH CARE</div></div>
+        <svg class="botband" viewBox="0 0 360 22" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+          <path transform="translate(40,11) scale(0.5) translate(-12,-12)" fill="#FFA70B" d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.3 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/>
+          <path transform="translate(116,10) scale(0.45) translate(-12,-12)" fill="#E51A4B" d="M12 21s-8.6-5.4-8.6-11.5A4.6 4.6 0 0 1 12 5.9a4.6 4.6 0 0 1 8.6 3.6C20.6 15.6 12 21 12 21z"/>
+          <path transform="translate(180,12) scale(0.4) translate(-12,-12)" fill="#FFF8EC" opacity=".75" d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2z"/>
+          <path transform="translate(244,10) scale(0.45) translate(-12,-12)" fill="#E51A4B" d="M12 21s-8.6-5.4-8.6-11.5A4.6 4.6 0 0 1 12 5.9a4.6 4.6 0 0 1 8.6 3.6C20.6 15.6 12 21 12 21z"/>
+          <path transform="translate(320,11) scale(0.5) translate(-12,-12)" fill="#00AAB2" d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.3 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/>
+        </svg>
+        <div class="inv-foot">
+          <div class="tl">COOKED WITH LOVE · SERVED WITH CARE</div>
+        </div>
       </div>
     </div>
 
